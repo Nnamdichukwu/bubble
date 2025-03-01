@@ -1,5 +1,5 @@
 import os
-
+import requests
 import json
 import time
 from openai import OpenAI
@@ -9,9 +9,16 @@ from dotenv import load_dotenv
 
 load_dotenv()
 TWITTER_BASE_URL = "https://api.twitter.com/2"
+TWITTER_HEADERS = {
+    "accept": "application/json",
+    "content-type": "application/json",
+   'Authorization': 'Bearer ' +  os.getenv('TWITTER_BEARER_TOKEN')
+}
+
 class TweetExtractor:
     def __init__(self):
-   
+        
+        
         
         self.openai_client = OpenAI(api_key=os.getenv('OPENAI_API_KEY'))
         
@@ -33,11 +40,17 @@ class TweetExtractor:
         if retries == 0:
             raise Exception("Failed to connect to Kafka after multiple retries")
 
-    def search_tweets(self, query, max_results=10):
+    def search_tweets(self, query: str, max_results=10, sort_order= 'recent'):
         """Search for tweets and return them with sentiment analysis."""
         print(f"Searching for tweets with query: {query}")
+        params= {
+            "query": query,
+            "max_results": max_results,
+            "sort_order": sort_order 
+
+        }
         try:
-            tweets = self.client.search_recent_tweets(
+            tweets = self._get_recent_search(
                 query=query,
                 max_results=max_results,
                 tweet_fields=['created_at', 'lang', 'public_metrics']
@@ -94,6 +107,17 @@ class TweetExtractor:
             print(f"Successfully sent tweet {tweet_data['id']} to Kafka")
         except Exception as e:
             print(f"Error sending to Kafka: {str(e)}")
+    def _get_recent_search(self, params: object):
+        try:
+            self.response = requests.get(TWITTER_BASE_URL + "/tweets/search/recent", headers=TWITTER_HEADERS, params=params)
+            # Check if the response is successful
+            if self.response.status_code == 200:
+                return {"status": "success", "data": self.response.json(), "message": "Twitter recent search fetched successfully"}
+            else:
+             return {"status": "failed", "data": self.response.json(), "message": "Failed to fetch twitter recent search with " + str(self.response.status_code) + " error" }
+        except requests.exceptions.RequestException as e:
+             return {"status": "error", "data": str(e), "message": "An error occured on fetching twitter recent search" }
+
 
 if __name__ == "__main__":
     while True:
