@@ -1,0 +1,30 @@
+[tool.poetry]
+name = "twitter-sentiment-pipeline"
+version = "0.1.0"
+description = "A data pipeline for Twitter sentiment analysis using OpenAI, Kafka, and Apache Pinot"
+authors = ["Your Name <your.email@example.com>"]
+packages = [
+    { include = "extract" },
+    { include = "orchestration" }
+]
+
+[tool.poetry.dependencies]
+python = "^3.9"
+tweepy = "^4.14.0"
+openai = "^1.3.0"
+kafka-python = "^2.0.2"
+pinotdb = "^0.3.11"
+apache-superset = "^2.1.0"
+dagster = "^1.5.6"
+dagster-graphql = "^1.5.6"
+dagster-webserver = "^1.5.6"
+python-dotenv = "^1.0.0"
+
+[tool.poetry.group.dev.dependencies]
+black = "^23.11.0"
+isort = "^5.12.0"
+flake8 = "^6.1.0"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"

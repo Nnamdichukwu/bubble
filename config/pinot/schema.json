@@ -1,0 +1,33 @@
+{
+  "schemaName": "twitter_sentiment",
+  "dimensionFieldSpecs": [
+    {
+      "name": "id",
+      "dataType": "LONG"
+    },
+    {
+      "name": "text",
+      "dataType": "STRING"
+    },
+    {
+      "name": "lang",
+      "dataType": "STRING"
+    },
+    {
+      "name": "sentiment",
+      "dataType": "STRING"
+    }
+  ],
+  "metricFieldSpecs": [
+    {
+      "name": "public_metrics",
+      "dataType": "JSON"
+    }
+  ],
+  "dateTimeFieldSpecs": [{
+    "name": "created_at",
+    "dataType": "TIMESTAMP",
+    "format": "1:MILLISECONDS:EPOCH",
+    "granularity": "1:MILLISECONDS"
+  }]
+}
